@@ -73,8 +73,8 @@ class restore_scormadaptivequiz_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('scormadaptivequizVIEWBYID', '/mod/scormadaptivequiz/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('scormadaptivequizINDEX', '/mod/scormadaptivequiz/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('SCORMADAPTIVEQUIZVIEWBYID', '/mod/scormadaptivequiz/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('SCORMADAPTIVEQUIZINDEX', '/mod/scormadaptivequiz/index.php?id=$1', 'course');
 
         return $rules;
 

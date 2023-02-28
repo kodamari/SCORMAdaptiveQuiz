@@ -63,11 +63,11 @@ class backup_scormadaptivequiz_activity_task extends backup_activity_task {
 
         // Link to the list of scormadaptivequizs.
         $search = '/('.$base.'\/mod\/scormadaptivequiz\/index.php\?id\=)([0-9]+)/';
-        $content = preg_replace($search, '$@scormadaptivequizINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@SCORMADAPTIVEQUIZINDEX*$2@$', $content);
 
         // Link to scormadaptivequiz view by moduleid.
         $search = '/('.$base.'\/mod\/scormadaptivequiz\/view.php\?id\=)([0-9]+)/';
-        $content = preg_replace($search, '$@scormadaptivequizVIEWBYID*$2@$', $content);
+        $content = preg_replace($search, '$@SCORMADAPTIVEQUIZVIEWBYID*$2@$', $content);
 
         return $content;
     }

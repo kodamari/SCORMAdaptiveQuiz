@@ -25,7 +25,7 @@
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
  * @package    mod_scormadaptivequiz
- * @copyright  2016 ‘—§î•ñŠwŒ¤‹†Š/National Institute of Informatics
+ * @copyright  2016 å›½ç«‹æƒ…å ±å­¦ç ”ç©¶æ‰€/National Institute of Informatics
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

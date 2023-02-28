@@ -18,7 +18,7 @@
  * The mod_scormadaptivequiz instance list viewed event.
  *
  * @package    mod_scormadaptivequiz
- * @copyright  2016 ‘—§î•ñŠwŒ¤‹†Š/National Institute of Informatics <your@email.adress>
+ * @copyright  2016 å›½ç«‹æƒ…å ±å­¦ç ”ç©¶æ‰€/National Institute of Informatics <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_scormadaptivequiz instance list viewed event class.
  *
  * @package    mod_scormadaptivequiz
- * @copyright  2016 ‘—§î•ñŠwŒ¤‹†Š/National Institute of Informatics <your@email.adress>
+ * @copyright  2016 å›½ç«‹æƒ…å ±å­¦ç ”ç©¶æ‰€/National Institute of Informatics <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {

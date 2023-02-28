@@ -21,7 +21,7 @@
  * See https://docs.moodle.org/dev/version.php for more info.
  *
  * @package    mod_scormadaptivequiz
- * @copyright  2017 ‘—§î•ñŠwŒ¤‹†Š/National Institute of Informatics <your@email.address>
+ * @copyright  2017 å›½ç«‹æƒ…å ±å­¦ç ”ç©¶æ‰€/National Institute of Informatics <your@email.address>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -164,20 +164,60 @@ function scormadaptivequiz_update_instance(stdClass $scormadaptivequiz, mod_scor
 	
 	//scormadaptivequiz_scoesデータがあるかを確認
 	
-	if ($DB->record_exists_select('scormadaptivequiz_scoes',
-			'scormadaptivequiz = :scormadaptivequiz',
-			array('scormadaptivequiz'=>$scormadaptivequiz->id)))
-	{
-		//データが「ある」場合はデータをUpdate
-		$sqlReturn = $DB->get_records('scormadaptivequiz_scoes',array('scormadaptivequiz'=>$scormadaptivequiz->id));
-		
-		foreach ($sqlReturn as $value) {
-			$identifier = $value->scoidentifier;
-			$newpassvalue = intval($scormadaptivequiz->$identifier);
-			$lastinsertid = $DB->update_record('scormadaptivequiz_scoes', array('id'=>$value->id,'passvalue'=>$newpassvalue));
-		}
-	}
+    if ($DB->record_exists_select('scormadaptivequiz_scoes',
+                    'scormadaptivequiz = :scormadaptivequiz',
+                    array('scormadaptivequiz'=>$scormadaptivequiz->id)))
+    {
+            //データが「ある」場合はデータをUpdate
+            $sqlReturn = $DB->get_records('scormadaptivequiz_scoes',array('scormadaptivequiz'=>$scormadaptivequiz->id));
 
+            foreach ($sqlReturn as $value) {
+                    $identifier = $value->scoidentifier;
+                    $newpassvalue = intval($scormadaptivequiz->$identifier);
+                    $lastinsertid = $DB->update_record('scormadaptivequiz_scoes', array('id'=>$value->id,'passvalue'=>$newpassvalue));
+            }
+    }
+    //2021-04-15 バックアップ→リストアの過程で
+    //scormadaptivequiz_scoesのレコードが維持されないので、
+    //更新したときに自動的につくるように改善
+    else {
+        $dbman = $DB->get_manager();
+        if ($dbman->table_exists('quiz_question_instances')) {
+            $questionid ="";
+            $quiz_question_instances = $DB->get_records('quiz_question_instances', array('quiz'=>$scormadaptivequiz->quiz));
+            foreach ($quiz_question_instances as $value) {
+                    $questionid .= '"'.$value->question.'",';
+            }
+            $questionid = substr($questionid, 0, -1);
+        } else {
+            if($dbman->table_exists('quiz_slots')){
+                $questionid ="";
+                $quiz_slots = $DB->get_records('quiz_slots', array('quizid'=>$scormadaptivequiz->quiz));
+                foreach ($quiz_slots as $value) {
+                    $questionid .= "{$value->questionid},";
+                }
+                $questionid = substr($questionid, 0, -1);
+            }else{
+                echo 'Can not find quiz_slots table';
+                return;
+            }
+        }
+        $allSkipableScoList = $DB->get_records_sql(
+            'SELECT DISTINCT qc.name , ss.title
+             FROM {question} qq
+             JOIN {question_categories} qc ON qq.category = qc.id
+             JOIN {scorm_scoes} ss ON ss.identifier = qc.name
+             where qq.id in ('.$questionid.') and ss.scorm = '.$scormadaptivequiz->scorm.';');
+        $record = new stdClass();
+        foreach ($allSkipableScoList as $value) {
+            $record->scormadaptivequiz = $scormadaptivequiz->id;
+            $record->scoidentifier = $value->name;
+            $record->scotitle = $value->title;
+            $record->passvalue = 100;
+            $record->questioncategory = $value->name;			
+            $lastinsertid = $DB->insert_record('scormadaptivequiz_scoes', $record, false);
+        }
+    }
     scormadaptivequiz_grade_item_update($scormadaptivequiz);
 
 

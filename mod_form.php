@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/scormadaptivequiz/locallib.php');
+require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Module instance settings form
@@ -73,38 +74,43 @@ class mod_scormadaptivequiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'scormadaptivequizfieldset', get_string('scormadaptivequizfieldset', 'scormadaptivequiz'));
 		//$mform->addElement('hidden', 'pageurl', $PAGE->url);
         // Target Scorm content.
-		$mform->addElement('select', 'scorm', get_string('targetscorm1', 'scormadaptivequiz'), targetscorm_array());
-		$mform->addRule('scorm', null, 'required', null, 'client');
+        $mform->addElement('select', 'scorm', get_string('targetscorm1', 'scormadaptivequiz'), targetscorm_array());
+        $mform->addRule('scorm', null, 'required', null, 'client');
         // Target Quiz content.
         $mform->addElement('select', 'quiz', get_string('targetquiz1', 'scormadaptivequiz'), targetquiz_array());
-		$mform->addRule('quiz', null, 'required', null, 'client');
-		//$mform->addElement('submit','mybutton','setting & reload');
+        $mform->addRule('quiz', null, 'required', null, 'client');
+        //$mform->addElement('submit','mybutton','setting & reload');
 		
-		$rinrin = $DB->get_record('scormadaptivequiz', array('course'=>$COURSE->id));
-		if($rinrin){
-			if ($DB->record_exists_select('scormadaptivequiz_scoes',
-					'scormadaptivequiz = :id',array('id'=>$rinrin->id)))
-			{
-				//データが「ある」場合はデータを取得
-				//スキップ項目リストと閾値の表示
-				$scormadaptivequiz_scoes = $DB->get_records('scormadaptivequiz_scoes', array('scormadaptivequiz'=>$rinrin->id));
-				$mform->addElement('html','<table class="generaltable boxaligncenter">');
-				$mform->addElement('html','<thead><tr><th class="header c0" style="" scope="col">'.get_string('bindinfo1','scormadaptivequiz').'</th>');
-				$mform->addElement('html','<th class="header c1" style="" scope="col">'.get_string('bindinfo2','scormadaptivequiz').'</th>');
-				$mform->addElement('html','<th class="header c2 lastcol" style="" scope="col">'.get_string('bindinfo3','scormadaptivequiz').'</th></tr></thead>');
-				$mform->addElement('html','<tbody>');
-				foreach ($scormadaptivequiz_scoes as $value) {
-					$mform->addElement('html','<tr>');
-					$mform->addElement('html','<td style="vertical-align:middle">'.$value->scotitle.'</td>');
-					$mform->addElement('html','<td style="vertical-align:middle">'.$value->scoidentifier.'</td>');
-					$mform->addElement('html','<td>');
-					$mform->addElement('text', $value->scoidentifier, '', array('value'=>$value->passvalue,'maxlength'=>'3','size'=>'3'));
-					$mform->addElement('html','</td>');
-					$mform->addElement('html','</tr>');
-				}
-				$mform->addElement('html','</tbody></table>');
-			}
-		}
+        $cm = $this->get_coursemodule();
+        if (!is_null($cm)) {
+                $rinrin = $DB->get_record('scormadaptivequiz', array('id'=>$cm->instance));
+        } else {
+                $rinrin = false;
+        }
+        if($rinrin){
+            if ($DB->record_exists_select('scormadaptivequiz_scoes',
+                            'scormadaptivequiz = :id',array('id'=>$rinrin->id))) {
+                //データが「ある」場合はデータを取得
+                //スキップ項目リストと閾値の表示
+                $scormadaptivequiz_scoes = $DB->get_records('scormadaptivequiz_scoes', array('scormadaptivequiz'=>$rinrin->id),'scoidentifier');
+                $mform->addElement('html','<table class="generaltable boxaligncenter">');
+                $mform->addElement('html','<thead><tr><th class="header c0" style="" scope="col">'.get_string('bindinfo1','scormadaptivequiz').'</th>');
+                $mform->addElement('html','<th class="header c1" style="" scope="col">'.get_string('bindinfo2','scormadaptivequiz').'</th>');
+                $mform->addElement('html','<th class="header c2 lastcol" style="" scope="col">'.get_string('bindinfo3','scormadaptivequiz').'</th></tr></thead>');
+                $mform->addElement('html','<tbody>');
+                foreach ($scormadaptivequiz_scoes as $value) {
+                    $mform->addElement('html','<tr>');
+                    $mform->addElement('html','<td style="vertical-align:middle">'.$value->scotitle.'</td>');
+                    $mform->addElement('html','<td style="vertical-align:middle">'.$value->scoidentifier.'</td>');
+                    $mform->addElement('html','<td>');
+                    $mform->addElement('text', $value->scoidentifier, '', array('value'=>$value->passvalue,'maxlength'=>'3','size'=>'3'));
+                    $mform->setType($value->scoidentifier, PARAM_INT);
+                    $mform->addElement('html','</td>');
+                    $mform->addElement('html','</tr>');
+                }
+                $mform->addElement('html','</tbody></table>');
+            }
+        }
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();
